@@ -1,0 +1,114 @@
+<ion-header class="ion-no-border overlay-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+    <div class="title-pill">
+      <span class="live-dot" [class.on]="cameraActive() && !stillImage()"></span>
+      Escáner Pokémon
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" [scrollY]="false" class="scanner">
+  <div class="viewport">
+    <video #video class="video" autoplay muted playsinline [class.hidden]="!!stillImage()"></video>
+
+    @if (stillImage(); as still) {
+      <img class="still" [src]="still" alt="Imagen seleccionada" />
+    }
+
+    @if (cameraActive() && !stillImage() && !arPokemon()) {
+      <div class="guide" [class.busy]="analyzing()" [style.--guide]="guideRatio">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <i class="scanline"></i>
+      </div>
+    }
+
+    @if (cameraError() && !stillImage()) {
+      <div class="message glass">
+        <ion-icon name="videocam-off-outline"></ion-icon>
+        <p>{{ cameraError() }}</p>
+        <ion-button shape="round" color="light" size="small" (click)="startCamera()">
+          <ion-icon slot="start" name="refresh"></ion-icon>
+          Reintentar cámara
+        </ion-button>
+      </div>
+    }
+
+    <div class="top-status">
+      @if (statusText()) {
+        <div class="pill glass" [class.error]="recognition.status() === 'error'">
+          @if (recognition.status() === 'error') {
+            <ion-icon name="alert-circle-outline"></ion-icon>
+          } @else {
+            <ion-spinner name="crescent"></ion-spinner>
+          }
+          <span>{{ statusText() }}</span>
+          @if (recognition.status() === 'error') {
+            <button type="button" class="pill-action" (click)="recognition.init()">Reintentar</button>
+          }
+          @if (recognition.status() === 'training') {
+            <i class="pill-progress" [style.width.%]="recognition.progress() * 100"></i>
+          }
+        </div>
+      } @else if (analyzing()) {
+        <div class="pill glass"><ion-spinner name="dots"></ion-spinner><span>Analizando…</span></div>
+      }
+    </div>
+
+    @if (arPokemon(); as p) {
+      <app-ar-overlay
+        class="ar"
+        animate.enter="ar-enter"
+        animate.leave="ar-leave"
+        [pokemon]="p"
+        [confianza]="result()?.confianza ?? 0"
+        (closed)="reset()"
+        (viewDetail)="openDetail($event)"
+      ></app-ar-overlay>
+    } @else if (result(); as r) {
+      <div class="result glass" animate.enter="toast-enter">
+        <ion-icon [name]="r.reconocido ? 'checkmark-circle' : 'help-circle-outline'"></ion-icon>
+        <div class="result-text">
+          <strong>{{ r.pokemon }}</strong>
+          @if (r.reconocido) {
+            <span>Confianza {{ confidencePct() }}%</span>
+          } @else {
+            <span>Acércate, centra al Pokémon en el marco y evita reflejos</span>
+          }
+        </div>
+        <button type="button" class="pill-action" (click)="reset()">OK</button>
+      </div>
+    } @else if (predictError()) {
+      <div class="result glass">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <div class="result-text"><strong>{{ predictError() }}</strong></div>
+      </div>
+    } @else if (cameraActive() && !stillImage() && recognition.ready() && !analyzing()) {
+      <p class="hint">Encuadra al Pokémon dentro del marco</p>
+    }
+  </div>
+
+  <div class="controls">
+    <button type="button" class="round glass" aria-label="Elegir de la galería" (click)="pickFromGallery()" [disabled]="analyzing()">
+      <ion-icon name="images-outline"></ion-icon>
+    </button>
+    <button
+      class="shutter"
+      type="button"
+      aria-label="Capturar"
+      (click)="capture()"
+      [disabled]="analyzing() || recognition.status() === 'error'"
+    >
+      <span></span>
+    </button>
+    @if (stillImage() || result()) {
+      <button type="button" class="round glass" aria-label="Volver a la cámara" (click)="reset()">
+        <ion-icon name="refresh"></ion-icon>
+      </button>
+    } @else {
+      <span class="round placeholder"></span>
+    }
+  </div>
+</ion-content>

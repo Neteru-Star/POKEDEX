@@ -1,0 +1,118 @@
+<ion-header class="ion-no-border overlay-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+    <span class="toolbar-number" slot="end">{{ number() }}</span>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" [style.--accent]="color()">
+  <section class="hero">
+    @if (pokemon(); as p) {
+      <div class="hero-info">
+        <h1>{{ p.name }}</h1>
+        <div class="types">
+          @for (t of p.types; track t) {
+            <app-type-chip [type]="t" variant="glass"></app-type-chip>
+          }
+        </div>
+        @if (p.genus) {
+          <span class="genus">{{ p.genus }}</span>
+        }
+      </div>
+      <img class="artwork" [src]="p.image" [alt]="p.name" />
+    } @else if (loading()) {
+      <div class="hero-info">
+        <ion-skeleton-text [animated]="true" class="sk-title"></ion-skeleton-text>
+        <ion-skeleton-text [animated]="true" class="sk-chip"></ion-skeleton-text>
+      </div>
+      <ion-skeleton-text [animated]="true" class="sk-art"></ion-skeleton-text>
+    }
+  </section>
+
+  <section class="sheet">
+    @if (error()) {
+      <div class="state">
+        <ion-icon name="cloud-offline-outline"></ion-icon>
+        <p>{{ error() }}</p>
+        <ion-button shape="round" (click)="load()">
+          <ion-icon slot="start" name="refresh"></ion-icon>
+          Reintentar
+        </ion-button>
+      </div>
+    } @else if (pokemon(); as p) {
+      <ion-segment [value]="tab()" (ionChange)="onTabChange($event)" mode="ios">
+        <ion-segment-button value="info"><ion-label>Información</ion-label></ion-segment-button>
+        <ion-segment-button value="stats"><ion-label>Estadísticas</ion-label></ion-segment-button>
+        <ion-segment-button value="moves"><ion-label>Ataques</ion-label></ion-segment-button>
+      </ion-segment>
+
+      @switch (tab()) {
+        @case ('info') {
+          <div class="panel">
+            <p class="description">{{ p.description }}</p>
+            <div class="measures">
+              <div class="measure">
+                <ion-icon name="resize-outline"></ion-icon>
+                <strong>{{ p.height }} m</strong>
+                <span>Altura</span>
+              </div>
+              <div class="measure">
+                <ion-icon name="barbell-outline"></ion-icon>
+                <strong>{{ p.weight }} kg</strong>
+                <span>Peso</span>
+              </div>
+            </div>
+            <h3>Tipos</h3>
+            <div class="types">
+              @for (t of p.types; track t) {
+                <app-type-chip [type]="t" variant="soft"></app-type-chip>
+              }
+            </div>
+          </div>
+        }
+        @case ('stats') {
+          <div class="panel">
+            @for (s of p.stats; track s.key) {
+              <div class="stat">
+                <span class="stat-label">{{ s.label }}</span>
+                <span class="stat-value">{{ s.value }}</span>
+                <div class="bar"><i [style.width.%]="statPercent(s.value)"></i></div>
+              </div>
+            }
+            <div class="stat total">
+              <span class="stat-label">Total</span>
+              <span class="stat-value">{{ totalStats() }}</span>
+              <span></span>
+            </div>
+          </div>
+        }
+        @case ('moves') {
+          <div class="panel moves">
+            @for (m of p.moves; track m.name) {
+              <div class="move" [style.--type]="typeColor(m.type)">
+                <div class="move-main">
+                  <strong>{{ m.name }}</strong>
+                  <app-type-chip [type]="m.type" variant="soft" [small]="true"></app-type-chip>
+                </div>
+                <div class="move-power">
+                  <strong>{{ m.power ?? '—' }}</strong>
+                  <span>Poder</span>
+                </div>
+              </div>
+            } @empty {
+              <p class="state">Sin ataques registrados.</p>
+            }
+          </div>
+        }
+      }
+    } @else {
+      <div class="panel">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <ion-skeleton-text [animated]="true" class="sk-line"></ion-skeleton-text>
+        }
+      </div>
+    }
+  </section>
+</ion-content>

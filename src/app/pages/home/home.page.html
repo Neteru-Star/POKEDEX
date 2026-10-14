@@ -1,0 +1,73 @@
+<ion-content [fullscreen]="true">
+  <header class="hero">
+    <div class="hero-text">
+      <span class="eyebrow">Región de Kanto</span>
+      <h1>Pokédex</h1>
+      <p>¿Qué Pokémon estás buscando?</p>
+    </div>
+
+    <ion-searchbar
+      class="search"
+      placeholder="Nombre o número"
+      [debounce]="120"
+      (ionInput)="onSearch($event)"
+      [disabled]="loading() || !!error()"
+    ></ion-searchbar>
+  </header>
+
+  @if (typeFilters().length) {
+    <nav class="filters no-scrollbar" aria-label="Filtrar por tipo">
+      <button type="button" class="filter" [class.active]="!selectedType()" (click)="toggleType(null)">Todos</button>
+      @for (t of typeFilters(); track t.key) {
+        <button
+          type="button"
+          class="filter"
+          [class.active]="selectedType() === t.key"
+          [style.--type]="t.color"
+          (click)="toggleType(t.key)"
+        >
+          <i class="dot"></i>{{ t.label }}
+        </button>
+      }
+    </nav>
+  }
+
+  <section class="list">
+    @if (loading()) {
+      <div class="grid">
+        @for (i of skeletons; track i) {
+          <ion-skeleton-text [animated]="true" class="skeleton"></ion-skeleton-text>
+        }
+      </div>
+    } @else if (error()) {
+      <div class="state">
+        <ion-icon name="cloud-offline-outline"></ion-icon>
+        <h3>Sin conexión</h3>
+        <p>{{ error() }}</p>
+        <ion-button shape="round" (click)="load()">
+          <ion-icon slot="start" name="refresh"></ion-icon>
+          Reintentar
+        </ion-button>
+      </div>
+    } @else {
+      <p class="count">{{ filtered().length }} Pokémon</p>
+      <div class="grid">
+        @for (p of filtered(); track p.id) {
+          <app-pokemon-card [pokemon]="p" [types]="typesOf(p.id)"></app-pokemon-card>
+        } @empty {
+          <div class="state">
+            <h3>Nada por aquí</h3>
+            <p>Ningún Pokémon coincide con tu búsqueda.</p>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="center">
+    <a class="scan-button" routerLink="/scanner" aria-label="Abrir escáner">
+      <ion-icon name="scan"></ion-icon>
+      Escanear
+    </a>
+  </ion-fab>
+</ion-content>

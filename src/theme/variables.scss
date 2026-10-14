@@ -1,0 +1,48 @@
+:root {
+  --ion-font-family: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --ion-color-primary: #e3350d;
+  --ion-color-primary-rgb: 227, 53, 13;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #c82f0b;
+  --ion-color-primary-tint: #e64925;
+
+  --app-bg: #f5f6fa;
+  --app-surface: #ffffff;
+  --app-surface-2: #eceef4;
+  --app-text: #15171c;
+  --app-muted: #6b7180;
+  --app-border: rgba(20, 23, 28, 0.08);
+  --app-shadow: 0 6px 20px rgba(20, 23, 28, 0.08);
+  --app-radius: 22px;
+  --app-gradient: linear-gradient(135deg, #ff5f3d 0%, #e3350d 55%, #b71c3c 100%);
+  --app-glass: rgba(255, 255, 255, 0.16);
+  --app-glass-border: rgba(255, 255, 255, 0.28);
+
+  --pokeball: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='white' d='M50 0a50 50 0 0 1 49.75 45H69.5a20 20 0 0 0-39 0H.25A50 50 0 0 1 50 0Zm0 100A50 50 0 0 1 .25 55H30.5a20 20 0 0 0 39 0h30.25A50 50 0 0 1 50 100Zm0-63a13 13 0 1 1 0 26 13 13 0 0 1 0-26Z'/%3E%3C/svg%3E");
+
+  --ion-background-color: var(--app-bg);
+  --ion-text-color: var(--app-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --app-bg: #0e1015;
+    --app-surface: #171a21;
+    --app-surface-2: #222631;
+    --app-text: #f1f3f8;
+    --app-muted: #9aa1b2;
+    --app-border: rgba(255, 255, 255, 0.08);
+    --app-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+    --ion-background-color: var(--app-bg);
+    --ion-text-color: var(--app-text);
+  }
+}
+
+body {
+  --ion-background-color: var(--app-bg);
+  --ion-text-color: var(--app-text);
+  --ion-item-background: var(--app-surface);
+}

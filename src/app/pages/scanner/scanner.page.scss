@@ -1,0 +1,393 @@
+.scanner {
+  --background: #050608;
+  color: #fff;
+}
+
+.overlay-header ion-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  --color: #fff;
+}
+
+.overlay-header ion-back-button {
+  --color: #fff;
+  --background: rgba(0, 0, 0, 0.35);
+  --border-radius: 50%;
+  margin-left: 8px;
+  width: 40px;
+  height: 40px;
+}
+
+.title-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-weight: 700;
+  font-size: 0.9rem;
+  transform: translateX(-24px);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8b93a5;
+
+  &.on {
+    background: #ff4d4d;
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+    animation: pulse 1.6s infinite;
+  }
+}
+
+.glass {
+  color: #fff;
+  background: rgba(20, 22, 28, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+}
+
+.video,
+.still {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.still {
+  object-fit: contain;
+  background: #050608;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.guide {
+  --corner: 34px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--guide) * min(100cqw, 100cqh));
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 28px;
+  box-shadow: 0 0 0 100vmax rgba(5, 6, 8, 0.45);
+  pointer-events: none;
+}
+
+.corner {
+  position: absolute;
+  width: var(--corner);
+  height: var(--corner);
+  border: 4px solid #fff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+
+  &.tl {
+    top: 0;
+    left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-top-left-radius: 28px;
+  }
+  &.tr {
+    top: 0;
+    right: 0;
+    border-left: 0;
+    border-bottom: 0;
+    border-top-right-radius: 28px;
+  }
+  &.bl {
+    bottom: 0;
+    left: 0;
+    border-right: 0;
+    border-top: 0;
+    border-bottom-left-radius: 28px;
+  }
+  &.br {
+    bottom: 0;
+    right: 0;
+    border-left: 0;
+    border-top: 0;
+    border-bottom-right-radius: 28px;
+  }
+}
+
+.scanline {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 10%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #ff5f3d, transparent);
+  box-shadow: 0 0 14px 2px rgba(255, 95, 61, 0.7);
+  animation: scan 2.4s ease-in-out infinite alternate;
+  opacity: 0.8;
+}
+
+.guide.busy {
+  .corner {
+    border-color: #ff5f3d;
+  }
+
+  .scanline {
+    animation-duration: 0.7s;
+    opacity: 1;
+  }
+}
+
+.top-status {
+  position: absolute;
+  top: calc(var(--ion-safe-area-top, 0px) + 68px);
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  overflow: hidden;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  ion-spinner {
+    width: 18px;
+    height: 18px;
+    color: #fff;
+  }
+
+  &.error ion-icon {
+    color: #ff6b6b;
+    font-size: 20px;
+  }
+}
+
+.pill-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--app-gradient);
+  transition: width 0.2s ease;
+}
+
+.pill-action {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: none;
+  background: #fff;
+  color: #111;
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.message {
+  position: absolute;
+  top: 50%;
+  left: 24px;
+  right: 24px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  border-radius: 24px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 40px;
+    opacity: 0.8;
+  }
+}
+
+.hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--ion-safe-area-bottom, 0px) + 140px);
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  opacity: 0.9;
+}
+
+.result {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(var(--ion-safe-area-bottom, 0px) + 132px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  border-radius: 20px;
+
+  > ion-icon {
+    flex: none;
+    font-size: 28px;
+    color: #ffd166;
+  }
+}
+
+.result-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  span {
+    font-size: 0.75rem;
+    opacity: 0.75;
+  }
+}
+
+.controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 24px 24px calc(var(--ion-safe-area-bottom, 0px) + 28px);
+  background: linear-gradient(transparent, rgba(5, 6, 8, 0.85));
+}
+
+.round {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 24px;
+
+  &:disabled {
+    opacity: 0.4;
+  }
+
+  &.placeholder {
+    visibility: hidden;
+  }
+}
+
+.shutter {
+  width: 80px;
+  height: 80px;
+  padding: 6px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: transparent;
+  transition: transform 0.15s ease;
+
+  span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--app-gradient);
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.9);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+  }
+}
+
+.ar {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.ar-enter {
+  animation: ar-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+}
+
+.ar-leave {
+  animation: ar-out 0.2s ease-in both;
+}
+
+.toast-enter {
+  animation: toast-in 0.3s ease both;
+}
+
+@keyframes ar-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.6);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes ar-out {
+  to {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.85);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes scan {
+  from {
+    top: 10%;
+  }
+  to {
+    top: 90%;
+  }
+}
+
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 8px rgba(255, 77, 77, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+  }
+}
